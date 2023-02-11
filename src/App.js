@@ -1,49 +1,32 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import { BrowserRouter, Navigate, Route, Routes, Switch } from "react-router-dom";
+import Home from './Page/Home';
+import Login from './Page/Login';
+import Signup from './Page/Signup';
 /*global chrome*/
 function App() {
-  const [size, setSize] = useState(null)
-  const [data, setData] = useState(localStorage.getItem('size'))
+  let status = localStorage.getItem('statusExt')
+  let user = localStorage.getItem('userid')
+  const [toggle, setToggle] = useState(true)
 
-  useEffect(()=>{
-    console.log("LOCAL ====>",localStorage.getItem('size'))
-  },[])
-  const getSize = () => {
-
-    let x = document.documentElement.innerHTML
-    console.log(x)
-    let resources = performance.getEntries();
-    let totalSize = 0;
-    for (let i = 0; i < resources.length; i++) {
-      if (!isNaN(resources[i].transferSize)) {
-        totalSize += resources[i].transferSize;
-      }
-
-    }
-    console.log((totalSize / 1024).toFixed(2) + " KB")
-    setSize((totalSize / 1024).toFixed(2))
+  const toggler = ()=>{
+    setToggle(!toggle)
   }
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type === "currentTabPerformanceDataFromContent") {
-      // Update the state with the performance data
-      setData(request.data);
-    }
-    if (request.type === "currentTabURLfromContent") {
-      // Update the state with the performance data
-      setData(request.data);
-    }
-  });
-  const getCurrentTab = ()=>{
-    
-    chrome.runtime.sendMessage({ type: "currentTabURL" });
-    //chrome.runtime.sendMessage({ type: "getCurrentTabPerformanceData" });
-  }
+  //window.alert(`APPstatus ${status} ${user}`)
   return (
-    <div className='popup'>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+    <div >
+      {status === null?<><Signup toggler={toggler}/></>:null}
+      {status === "false"?<><Login toggler={toggler}/></>:null}
+      {status === "true"?<><Home toggler={toggler}/></>:null}
+    
+      {/*<BrowserRouter>
+        <Routes>
+          <Route exact path="/" element={<Home />} />
+          <Route exact path="/signup" element={<Signup />} />
+          <Route exact path="/login" element={<Login />} />
+        </Routes>
+  </BrowserRouter>*/}
     </div>
   );
 }

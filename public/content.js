@@ -12,7 +12,20 @@
 //   });
 
 
-const getSize = () => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.message) {
+      console.log(request.message);
+    }
+  });
+
+const getSize =async () => {
+
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Access-Control-Allow-Origin', "https://tri-nit-backend.vercel.app");
+    headers.append('Access-Control-Allow-Credentials', 'true');
+    headers.append('GET', 'POST', 'OPTIONS');
+
 
     let resources = performance.getEntries();
     let totalSize = 0;
@@ -22,13 +35,20 @@ const getSize = () => {
         }
 
     }
-    console.log((totalSize / 1024).toFixed(2) + " KB")
-   // let x = document.getElementsByTagName('p')
-   // for(let i of x){
-   //     i.style.opacity = 0
-   // }
-    //document.getElementsByTagName('p')[0].style.opacity = 0
-    //setSize((totalSize / 1024).toFixed(2))
+    let response = await fetch("https://tri-nit-backend.vercel.app/api/carbonemission/postdata",
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ userid:"naman@gmail.com",webpage:window.location.origin,datatransferredingb:(totalSize/ 1024 / 1024 /1024) })
+      })
+      console.log(localStorage.getItem('statusExt'),localStorage.getItem('userid'))
+    //console.log((totalSize / 1024).toFixed(2) + " KB")
+    console.log(11   * (totalSize / 1024 / 1024 /1024 ) + " gms")
+    //console.log(11  *1000 * (totalSize / 1024 / 1024 /1024 ) + " milli gms")
+    //console.log(window.location.origin)
+
+    
+  
 }
 
 getSize()
